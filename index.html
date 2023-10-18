@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Autómata de Pila</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+  <h1>Proyecto Automas 2023</h1>
+  <h2>AUTOMATA DE PILA</h2>
+  <h3>Lenguaje L={(x)^2n (y)^m (x)^3m (y)^n (z)+ | n >= 1 , m >= 1} </h3>
+
+
+  <div class="container">
+
+    <div>
+    <h2>Generar Cadena</h2>
+    <label for="mInput">m:</label>
+    <input type="number" id="mInput" min="1" value="1">
+    <label for="nInput">n:</label>
+    <input type="number" id="nInput" min="1" value="1">
+    <label for="zInput">z:</label>
+    <input type="number" id="zInput" min="1" value="1">
+    <button onclick="generateString()">Generar Cadena</button>
+    </div>
+
+    <textarea id="inputString" placeholder="Ingresa la cadena"></textarea>
+    <button onclick="checkInput()">Verificar</button>
+
+    <h2>Conjunto de Funciones de Transiciones</h2>
+    <table id="transitionsTable">
+      <tr>
+        <th>Estado</th>
+        <th>Símbolo</th>
+        <th>Transición</th>
+      </tr>
+    </table>
+
+    <h2>Descripciones Instantáneas</h2>
+    <table id="descriptionsTable">
+      <tr>
+        <th>Paso</th>
+        <th>Estado de la Pila</th>
+        <th>Cadena de Entrada</th>
+        <th>Transición</th>
+        <th>Acción</th>
+      </tr>
+    </table>
+
+    <div id="resultContainer">
+      <p id="resultText"></p>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+

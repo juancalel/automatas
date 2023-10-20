@@ -1,5 +1,7 @@
-function checkInputWithString(input) {
-  const inputString = input;
+let currentStep = 0;
+
+function checkInput() {
+  const inputString = document.getElementById('inputString').value;
   const transitionsTable = document.getElementById('transitionsTable');
   const descriptionsTable = document.getElementById('descriptionsTable');
   const resultContainer = document.getElementById('resultContainer');
@@ -17,7 +19,7 @@ function checkInputWithString(input) {
     const transitions = generateTransitions(inputString);
     displayTransitions(transitions, transitionsTable);
     displayDescriptions(description, descriptionsTable);
-    resultText.innerText = 'CADENA VALIDA';
+    resultText.innerText = 'CADENA VÁLIDA';
     resultContainer.classList.add('valid');
   } else {
     // Mostrar transiciones hasta la posición y descripción
@@ -27,178 +29,42 @@ function checkInputWithString(input) {
     displayDescriptions(description, descriptionsTable);
   }
 }
-
-
-function clearTable(table) {
-  const rowCount = table.rows.length;
-  for (let i = rowCount - 1; i > 0; i--) {
-    table.deleteRow(i);
-  }
-}
-
-function checkInput() {
-  const inputString = document.getElementById('inputString').value;
-  checkInputWithString(inputString);
-}
+console.log(inputString.substring(0, position));
 
 function findInvalidTransition(inputString) {
   const n = inputString.length;
-  const description = [];
   let stack = [];
-  let mCount = 0;
-  let nCount = 0;
-  let zFound = false;
-
+  let currentState = 'q0';
+  let description = [];
+  
   for (let i = 0; i < n; i++) {
     const symbol = inputString[i];
     let nextState = '';
     let action = '';
 
-    if (symbol === 'x') {
-      if (mCount < 1 || mCount === nCount) {
-        mCount++;
-        nCount++;
-        nextState = 'q0';
-        action = `Push ${symbol}`;
-      } else {
-        return { position: i, description };
-      }
-    } else if (symbol === 'y') {
-      if (mCount > 0 && mCount === nCount) {
-        mCount--;
-        nCount--;
-        nextState = 'q0';
-        action = `Pop ${symbol}`;
-      } else {
-        return { position: i, description };
-      }
-    } else if (symbol === 'z') {
-      if (mCount === 0 && nCount === 0 && !zFound) {
-        zFound = true;
+    if (symbol === 'a') {
+      stack.push(symbol);
+      nextState = `q${i + 1}`;
+      action = `Push ${symbol}`;
+    } else if (symbol === 'b') {
+      if (stack.length > 0) {
+        stack.pop();
+        nextState = `q${i + 1}`;
+        action = 'Pop';
       } else {
         return { position: i, description };
       }
     } else {
+      // El símbolo no es 'a' ni 'b', la cadena no es válida
       return { position: i, description };
     }
 
-    description.push({ step: i, state: 'q0', stack: stack.join(''), input: inputString.substring(i), transition: `(${symbol}) -> ${nextState}`, action });
-  }
-
-  if (zFound && mCount === 0 && nCount === 0) {
-    return { position: n, description };
-  } else {
-    return { position: n - 1, description };
-  }
-}
-
-
-
-
-function generateTransitions(inputString) {
-  const transitions = [];
-  const n = inputString.length;
-
-  let currentState = 'q0';
-  for (let i = 0; i < n; i++) {
-    const symbol = inputString[i];
-    const nextState = `q${i + 1}`;
-    transitions.push({ currentState, symbol, nextState });
+    description.push({ step: i, state: currentState, stack: stack.join(''), input: inputString.substring(i), transition: `(${symbol}) -> ${nextState}`, action });
     currentState = nextState;
   }
 
-  transitions.push({ currentState: `q${n}`, symbol: '$', nextState: `q${n}` });
-
-  return transitions;
+  return { position: n, description };
 }
-
-function displayTransitions(transitions, table) {
-  for (const transition of transitions) {
-    const row = table.insertRow(-1);
-    const currentStateCell = row.insertCell(0);
-    const symbolCell = row.insertCell(1);
-    const nextStateCell = row.insertCell(2);
-
-    currentStateCell.innerText = transition.currentState;
-    symbolCell.innerText = transition.symbol;
-    nextStateCell.innerText = transition.nextState;
-  }
-}
-
-function generateDescriptions(inputString) {
-  const descriptions = [];
-  const n = inputString.length;
-  let stack = [];
-  let mCount = 0;
-  let nCount = 0;
-
-  for (let i = 0; i <= n; i++) {
-    const state = `q${i}`;
-    const remainingInput = inputString.substring(i);
-    let action = '';
-
-    if (i < n) {
-      const symbol = inputString[i];
-      if (symbol === 'x') {
-        stack.push(symbol);
-        mCount++;
-        nCount++;
-        action = `Push ${symbol}`;
-      } else if (symbol === 'y') {
-        if (mCount > 0 && nCount > 0) {
-          stack.pop();
-          mCount--;
-          nCount--;
-          action = `Pop ${symbol}`;
-        } else {
-          return { descriptions: [], valid: false };
-        }
-      } else if (symbol === 'z') {
-        if (mCount === 0 && nCount === 0 && i === n - 1) {
-          action = `Read ${symbol}`;
-        } else {
-          return { descriptions: [], valid: false };
-        }
-      } else {
-        return { descriptions: [], valid: false };
-      }
-    }
-
-    const description = {
-      step: i,
-      state,
-      stack: stack.join(''),
-      input: remainingInput,
-      transition: (i < n) ? `(${inputString[i]}) -> q${i + 1}` : '',
-      action
-    };
-
-    descriptions.push(description);
-  }
-
-  return { descriptions, valid: true };
-}
-
-
-
-
-function displayDescriptions(descriptions, table) {
-  for (const description of descriptions) {
-    const row = table.insertRow(-1);
-    const stepCell = row.insertCell(0);
-    const stateCell = row.insertCell(1);
-    const stackCell = row.insertCell(2);
-    const inputCell = row.insertCell(3);
-    const transitionCell = row.insertCell(4);
-
-    stepCell.innerText = description.step;
-    stateCell.innerText = description.state;
-    stackCell.innerText = description.stack;
-    inputCell.innerText = description.input;
-    transitionCell.innerText = description.transition;
-  }
-}
-
 
 function isMatching(inputString) {
   const stack = [];
@@ -225,35 +91,115 @@ function isMatching(inputString) {
   return stack.length === 0;
 }
 
+// Resto de las funciones y código existente, incluyendo clearTable, generateTransitions, y generateDescriptions
 
-function generateString() {
-  const m = parseInt(document.getElementById('mInput').value);
-  const n = parseInt(document.getElementById('nInput').value);
-  const z = parseInt(document.getElementById('zInput').value);
-
-  let generatedString = '';
-  // Generar (x^2n)(y^m)((xxx)^m)(y^n) z+
-  // Generar (x^2n)
-  for (let i = 0; i < 2 * n; i++) {
-    generatedString += 'x';
+function clearTable(table) {
+  const rowCount = table.rows.length;
+  for (let i = rowCount - 1; i > 0; i--) {
+    table.deleteRow(i);
   }
-    // Generar (y^m)
-    for (let i = 0; i < m; i++) {
-      generatedString += 'y';
-    }
-      // Generar (x^3m)
-  for (let i = 0; i < 3 * m; i++) {
-    generatedString += 'x';
-  }
-  // Generar (y^n)
-  for (let i = 0; i < n; i++) {
-    generatedString += 'y';
-  }
-  // Generar z+
-  for (let i = 0; i < z; i++) {
-    generatedString += 'z';
-  }
-  // Insertar la cadena generada en el cuadro de texto
-  document.getElementById('inputString').value = generatedString;
 }
 
+function generateTransitions(inputString) {
+  const transitions = [];
+  const n = inputString.length;
+
+  let currentState = 'q0';
+  for (let i = 0; i < n; i++) {
+    const symbol = inputString[i];
+
+    if (symbol == 'a'){
+      nextState = currentState;
+    }else if(symbol == 'b'){
+      nextState = `q${'1'}`;
+    }
+
+    transitions.push({currentState, symbol, nextState, action: `Push ${symbol}`});
+    currentState = nextState;
+  }
+
+  transitions.push({ currentState, symbol: '$', currentState, action: `Pop` });
+
+  return transitions;
+}
+
+function displayTransitions(transitions, table) {
+  for (const transition of transitions) {
+    const row = table.insertRow(-1);
+    const currentStateCell = row.insertCell(0);
+    const symbolCell = row.insertCell(1);
+    const nextStateCell = row.insertCell(2);
+
+    currentStateCell.innerText = transition.currentState;
+    symbolCell.innerText = transition.symbol;
+    nextStateCell.innerText = transition.nextState;
+  }
+}
+
+function generateDescriptions(inputString) {
+  const descriptions = [];
+  const n = inputString.length;
+  let stack = [];
+
+  for (let i = 0; i <= n; i++) {
+    const state = `q${i}`;
+    const remainingInput = inputString.substring(i);
+    const description = {
+      step: i,
+      state,
+      stack: stack.join(''),
+      input: remainingInput,
+      transition: (i < n) ? `(${inputString[i]}) -> q${i + 1}` : ''
+    };
+
+    descriptions.push(description);
+
+    if (i < n) {
+      stack.push(inputString[i]);
+    }
+  }
+
+  return descriptions;
+}
+
+function displayDescriptions(descriptions, table) {
+  for (const description of descriptions) {
+    const row = table.insertRow(-1);
+    const stepCell = row.insertCell(0);
+    const stateCell = row.insertCell(1);
+    const stackCell = row.insertCell(2);
+    const inputCell = row.insertCell(3);
+    const transitionCell = row.insertCell(4);
+
+    stepCell.innerText = description.step;
+    stateCell.innerText = description.state;
+    stackCell.innerText = description.stack;
+    inputCell.innerText = description.input;
+    transitionCell.innerText = description.transition;
+  }
+}
+
+function isMatching(inputString) {
+  const stack = [];
+  const n = inputString.length;
+
+  for (let i = 0; i < n; i++) {
+    const symbol = inputString[i];
+
+    if (symbol === 'a') {
+      stack.push(symbol);
+    } else if (symbol === 'b') {
+      if (stack.length > 0) {
+        stack.pop();
+      } else {
+        return false;
+      }
+    } else {
+      // El símbolo no es 'a' ni 'b', la cadena no es válida
+      return false;
+    }
+  }
+
+  // Verifica si la pila está vacía al final
+  return stack.length === 0;
+}

@@ -1,39 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Autómata de Pila</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proyecto Automatas 2023</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-  <div class="container">
-    <textarea id="inputString" placeholder="Ingresa la cadena"></textarea>
-    <button onclick="checkInput()">Verificar</button>
+  <header>
+    <h1>Automata de Pila</h1>
+    <h2>Alumno: Juan Calel Rivera</h2>
+    <h3>Lenguaje: 𝐿 = {𝑥^2𝑛 𝑦^𝑚 𝑥^3𝑚 𝑦^𝑛 𝑧+ | 𝑛 ≥ 1, 𝑚 ≥ 1}</h3>
+  </header>
 
-    <h2>Conjunto de Funciones de Transiciones</h2>
-    <table id="transitionsTable">
-      <tr>
-        <th>Estado</th>
-        <th>Símbolo</th>
-        <th>Transición</th>
-      </tr>
-    </table>
+  <main>
+    <section class="formulario">
+      <h4>Validar Cadena</h4>
+      <label for="inputString">Cadena de entrada:</label>
+      <input type="text" id="inputString">
+      <button onclick="validarCimaDePila()" class="btn btn-primary">Validar</button>
+      <button id="resetButton" onclick="reiniciar()" class="btn btn-danger">Reiniciar</button>
+      
+      <p id="resultadoParrafo">Resultado de la validación:</p>
+    </section>
 
-    <h2>Descripciones Instantáneas</h2>
-    <table id="descriptionsTable">
-      <tr>
-        <th>Paso</th>
-        <th>Estado de la Pila</th>
-        <th>Cadena de Entrada</th>
-        <th>Transición</th>
-        <th>Acción</th>
-      </tr>
-    </table>
+    <section class="imagen">
+      <img id="automataImage" src="/img/Q.png" alt="Imagen de un automata de Pila" width="900">
+    </section>
+  </main>
 
-    <div id="resultContainer">
-      <p id="resultText"></p>
-    </div>
-  </div>
+  <section class="tablas">
+    <div id="descripcionInstantaneaTable"></div>
+    <div id="conjuntoTransicionesTable"></div>
+    <div id="ID_Tabla"></div>
+  </section>
 
-  <script src="script.js"></script>
+  <script src="codigo.js"></script>
 </body>
 </html>
+
+
+

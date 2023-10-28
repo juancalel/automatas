@@ -70,3 +70,33 @@ th {
 .invalid {
   color: red;
 }
+
+/* Estilo para una cadena válida */
+.cadena-valida {
+  color: green;
+}
+
+/* Estilo para una cadena no válida */
+.cadena-no-valida {
+  color: red;
+}
+
+
+/* styles.css */
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.reset-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
